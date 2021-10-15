@@ -5,3 +5,33 @@
   height: 100px;
   background-color: papayawhip;
 }
+
+input{
+  background-color:transparent;
+  text-align: center;
+  /* border: 0px solid; */
+  width: 100px;
+  font-size: medium;
+  /* border: 0.5px solid black; */
+}
+
+#dropdownContainer{
+  width: 300px;
+  height: 100px;
+}
+
+#dropdownView{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 500px;
+  padding: 30px;
+  justify-content: space-evenly;
+}
+
+header{
+  background-color: grey;
+  color: white;
+  padding: 30px;
+  text-align: center;
+}
