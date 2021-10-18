@@ -1,6 +1,6 @@
 import logo from './logo.svg';
 import './App.css';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 function App() {
 
@@ -9,49 +9,77 @@ function App() {
       component_or_operator: '',
       isOperator: false,
       disabled: false,
-      color: 'black'
+      color: 'black',
+      isParanthesis : false,
+      componentType:''
     }
   ])
 
+  const [finalFormula, setFinalFormula] = useState([])
+  const [formula_structure, setFormulaStructure] = useState([])
+  const [operatorToggle, setOperatorToggle] = useState(false)
+  const [numbValues, setNumbValues] = useState([])
+  const [isSource, setIsSource] = useState(true);
+
   const [index, setIndex] = useState(0)
   const [suggestion, setSuggestion] = useState([])
-  const operator = ['+', '-', '*', '/']
+  const operator = ['+', '-', '*', '/','(',')']
 
-  const handleSearchChange = (e, index) => {
+  //search
+  const handleSearchChange = (e, index,item) => {
     const val = e.target.value
     let response
-    if (val == '+' || val == '-' || val == '*' || val == '/') {
+    const operatorCond = (val == '+' || val == '-' || val == '*' || val == '/' || val == '(' || val == ')') ? true : false
+    const numberCond = !isNaN(val)
+    
+    if (operatorCond) {
       response = operator.filter(item => item.includes(val))
     }
-    else {
+    else if(numberCond){
+      
+      let num = []
+      num.push(val)
+      response = num.filter(item => item.includes(val))
+    }
+    else if(val == ''){
+      response = []
+    }
+    else{
       response = search.filter(item => item.toLowerCase().includes(e.target.value))
     }
     setSuggestion(response)
+  
     let arrContent = text
-    console.log(parseInt(arrContent.length) - 1)
     arrContent[index].component_or_operator = val;
-    console.log(arrContent)
     setTimeout(() => {
       setText(arrContent)
     }, 50)
-
-
   }
+
+
+
   const handleSuggestionChange = (e, item, parentIndex = null) => {
+   if(item==0){
+      alert('0 cannot be used')
+      return
+    } 
     let res = text.slice(0, text.length - 1)
-    // const val = e.target.value
-    // console.log(val)
     const lastCont = {
       component_or_operator: '',
       isOperator: false,
-      disabled: false
+      disabled: false,
+      color: 'black',
+      isParanthesis : false,
+      componentType:''
     }
     if (operator.includes(item)) {
       const content = {
         component_or_operator: item,
         isOperator: true,
         disabled: false,
-        color: 'red'
+        color: 'red',
+        componentType : 'operator',
+        isParanthesis : false
       }
       // res.push(content)
       if (parentIndex != null) {
@@ -66,7 +94,9 @@ function App() {
         component_or_operator: item,
         isOperator: false,
         disabled: false,
-        color: 'green'
+        color: 'green',
+        componentType : isSource? "source" : "target",
+        isParanthesis : false
       }
       // res.push(content)
       // res[parentIndex] = content 
@@ -77,43 +107,65 @@ function App() {
         res.push(content)
       }
     }
+    
+    if(res[res.length-1].componentType=="target")
+      res = handleWithParams(res)
+    
+    
     res.push(lastCont)
-    console.log(res)
+    setIsSource(false)
+    
+    //handle for search
     setText([])
     setSuggestion([])
+    setOperatorToggle(!operatorToggle)
     setTimeout(() => {
       setText(res)
     }, 500)
-
+    console.log(res)
   }
   const search = ['basic', 'hra', 'allowance']
 
-  const handleInputClick = (index) => {
-    // const res = text
-    // res.map((resItem, resIndex) => {
-    //   if (resIndex == index) {
-    //     resItem.disabled = false
-    //   }
-    //   else {
-    //     resItem.disabled = true
-    //   }
-    // })
-    // console.log(res)
-    // setText([])
-    // setTimeout(() => {
-    //   setText(res)
-    // }, 500)
+  function handleWithParams(res) {
+    let arg = []
+    arg = res
+    let params = {
+      component_or_operator: '(',
+      isOperator: false,
+      disabled: true,
+      color: 'black',
+      isParanthesis : true,
+      componentType:'paranthesis'
+    }
+
+    if(arg[0].componentType == "source" || arg[0].isParanthesis ){
+      arg.unshift(params)
+    }
+    
+    params = {
+      component_or_operator: ')',
+      isOperator: false,
+      disabled: true,
+      color: 'black',
+      isParanthesis : true,
+      componentType:'paranthesis'
+    }
+    arg.push(params)
+    return arg
   }
 
+
+
+  
   return (
     <div>
       <header>Proof of concept - auto suggestion</header>
       <div className={'container'}>
         {
           text.map((item, parentIndex) => (
-            <input disabled={item.disabled} style={{ color: item.color }} onClick={() => handleInputClick(index)} value={item.component_or_operator} onChange={(e) => {
+            <input disabled={item.disabled} style={{ color: item.color }} value={item.component_or_operator} onChange={(e) => {
               setIndex(parentIndex)
-              handleSearchChange(e, parentIndex)
+              handleSearchChange(e, parentIndex,item)
             }} />
           ))
         }
@@ -137,10 +189,8 @@ function App() {
                 <option onClick={(e) => handleSuggestionChange(e, childItem)} value={childItem}>{childItem}</option>
               )
             })
-
           }
         </select>
-
         <select>
           {
             operator.map((childItem) => {
@@ -148,9 +198,11 @@ function App() {
                 <option onClick={(e) => handleSuggestionChange(e, childItem)} value={childItem}>{childItem}</option>
               )
             })
-
           }
         </select>
+      </div>
+      <div>
+        <input type = "submit" onClick={() => console.log(finalFormula)} />
       </div>
     </div>
   );

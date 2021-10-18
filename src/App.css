@@ -9,9 +9,9 @@
 input{
   background-color:transparent;
   text-align: center;
-  /* border: 0px solid; */
-  width: 100px;
-  font-size: medium;
+  border: 0px solid;
+  width: 50px;
+  /* font-size: medium; */
   /* border: 0.5px solid black; */
 }
 
@@ -33,5 +33,19 @@ header{
   background-color: grey;
   color: white;
   padding: 30px;
+  text-align: center;
+}
+
+#input_button_container{
+  display: flex;
+  flex-direction: row;
+}
+
+#button1Container{
+  display: inline-block;
+  width: 20px;
+  align-content: center;
+  background-color: green;
+  color: white;
   text-align: center;
 }
