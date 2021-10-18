@@ -50,7 +50,7 @@ function App() {
     setSuggestion(response)
   
     let arrContent = text
-    arrContent[index].component_or_operator = val;
+    arrContent[index].component_or_operator = val ==''? arrContent[index].component_or_operator : val;
     setTimeout(() => {
       setText(arrContent)
     }, 50)
