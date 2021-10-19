@@ -50,7 +50,7 @@ function App() {
     setSuggestion(response)
   
     let arrContent = text
-    arrContent[index].component_or_operator = val ==''? arrContent[index].component_or_operator : val;
+    arrContent[index].component_or_operator = val
     setTimeout(() => {
       setText(arrContent)
     }, 50)
@@ -114,7 +114,7 @@ function App() {
     
     res.push(lastCont)
     setIsSource(false)
-    
+    console.log(res)
     //handle for search
     setText([])
     setSuggestion([])
@@ -201,9 +201,9 @@ function App() {
           }
         </select>
       </div>
-      <div>
+      {/* <div>
         <input type = "submit" onClick={() => console.log(finalFormula)} />
-      </div>
+      </div> */}
     </div>
   );
 }
